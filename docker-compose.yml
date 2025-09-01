@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:15
+    container_name: tasks-db
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: tasks-api-container
+    ports:
+      - "4004:4004"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 4004 --reload
+
+  # Placeholder for frontend service
+  frontend:
+    build: ./frontend
+    container_name: frontend-container
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    # Placeholder command; replace with actual frontend start command
+    command: sh -c "echo 'Frontend placeholder' && sleep infinity"
+
+volumes:
+  db_data:
+
